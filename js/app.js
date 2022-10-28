@@ -1,4 +1,3 @@
-
 let carritoDeCompras = []
 
 const contenedorProductos = document.getElementById('contenedor-productos');
@@ -26,16 +25,61 @@ selecTalles.addEventListener('change',()=>{
 
 //Buscador
 
+const resultado = document.getElementById("resultado");
+
+const formulario = document.getElementById("formulario");
+
+const filtrar = () =>{
+
+    resultado.innerHTML = '';
+    
+    const texto = formulario.value.toLowerCase();
+    for ( let producto of stockProductos ){
+        let nombre = producto.nombre.toLowerCase();
+
+        if ( nombre.indexOf(texto) !== -1){
+            resultado.innerHTML += `
+            
+            <div class="card">
+                        <div class="card-image">
+                            <img src=${producto.img}>
+                            <span class="card-title">${producto.nombre}</span>
+                            <a  id="agregar${producto.id}" class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add_shopping_cart</i></a>
+                        </div>
+                        <div class="card-content">
+                            <p>${producto.desc}</p>
+                            <p>Talle: ${producto.talle}</p>
+                            <p> $${producto.precio}</p>
+                        </div>
+                    </div>
+            `
+        }
+
+    }
+    if ( resultado.innerHTML === '' ){
+        resultado.innerHTML = `<li>Producto no encontrado</li>`
+    }
+
+}
+
+formulario.addEventListener('keyup', filtrar)
+filtrar();
+
+
+
+
+
+
 mostrarProductos(stockProductos)
 
 //logica Ecommerce
 function mostrarProductos(array){
     contenedorProductos.innerHTML= ""
     
-   array.forEach(item => {
+array.forEach(item => {
 
-       let div = document.createElement('div')
-       div.classList.add('producto')
+    let div = document.createElement('div')
+    div.classList.add('producto')
     //    div.setAttribute('class', 'producto')
     //    div.className = 'producto'
     div.innerHTML += `
@@ -57,12 +101,12 @@ function mostrarProductos(array){
         let btnAgregar = document.getElementById(`agregar${item.id}`)
 
         btnAgregar.addEventListener('click',()=>{
-           agregarAlCarrito(item.id)
-           let productoAgregar = stockProductos.find(elemento => elemento.id == item.id)
-           localStorage.setItem('producto',JSON.stringify(productoAgregar))
+            agregarAlCarrito(item.id)
+            let productoAgregar = stockProductos.find(elemento => elemento.id == item.id)
+            localStorage.setItem('producto',JSON.stringify(productoAgregar))
         })
 
-   })
+    })
 }
 
 
@@ -73,7 +117,7 @@ function agregarAlCarrito(id) {
         document.getElementById(`und${yaEsta.id}`).innerHTML =` <p id=und${yaEsta.id}>Und:${yaEsta.cantidad}</p>`
         actualizarCarrito()
     }else{
-       let productoAgregar = stockProductos.find(elemento => elemento.id == id)
+        let productoAgregar = stockProductos.find(elemento => elemento.id == id)
     
         productoAgregar.cantidad = 1
         
@@ -105,7 +149,7 @@ function mostrarCarrito(productoAgregar) {
 
     btnEliminar.addEventListener('click',()=>{
         if(productoAgregar.cantidad == 1){
-           btnEliminar.parentElement.remove()
+            btnEliminar.parentElement.remove()
             carritoDeCompras = carritoDeCompras.filter(item=> item.id != productoAgregar.id)
             actualizarCarrito()
             localStorage.setItem('carrito', JSON.stringify(carritoDeCompras))
@@ -133,15 +177,15 @@ function  actualizarCarrito (){
 
 
 function recuperar() {
- let recuperarLS = JSON.parse(localStorage.getItem('carrito'))
- 
- if(recuperarLS){
-     recuperarLS.forEach(el=> {
-         mostrarCarrito(el)
-         carritoDeCompras.push(el)
-         actualizarCarrito()
-     })
- }
+    let recuperarLS = JSON.parse(localStorage.getItem('carrito'))
+
+    if(recuperarLS){
+        recuperarLS.forEach(el=> {
+        mostrarCarrito(el)
+        carritoDeCompras.push(el)
+        actualizarCarrito()
+    })
+}
 
 
 }
